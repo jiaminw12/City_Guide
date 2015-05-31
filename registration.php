@@ -14,7 +14,7 @@ if (!empty($_POST)) {
         
         // Create some data that will be the JSON response 
         $response["success"] = 0;
-        $response["message"] = "Please Enter Both a Username and Password.";
+        $response["message"] = "Please fill in all boxes.";
         
         //die will kill the page and not execute any code below, it will also
         //display the parameter... in this case the JSON data our Android
