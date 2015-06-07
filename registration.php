@@ -21,7 +21,8 @@ if (!empty($_POST)) {
         //app will parse
         die(json_encode($response));
     }
-    
+	
+    //CHECK USERNAME
     $query = " SELECT username FROM userinfo WHERE username = :user";
     //now lets update what :user should be
     $query_params = array(
@@ -55,6 +56,43 @@ if (!empty($_POST)) {
         //You could comment out the above die and use this one:
         $response["success"] = 0;
         $response["message"] = "I'm sorry, this username is already in use";
+        die(json_encode($response));
+    }
+	
+	//CHECK EMAILADDRESS
+	$query = " SELECT emailAddress FROM userinfo WHERE emailAddress = :email";
+    //now lets update what :user should be
+    $query_params = array(
+        ':user' => $_POST['emailAddress']
+    );
+    
+    //Now let's make run the query:
+    try {
+        // These two statements run the query against your database table. 
+        $stmt   = $db->prepare($query);
+        $result = $stmt->execute($query_params);
+    }
+    catch (PDOException $ex) {
+        // For testing, you could use a die and message. 
+        //die("Failed to run query: " . $ex->getMessage());
+        
+        //or just use this use this one to product JSON data:
+        $response["success"] = 0;
+        $response["message"] = "Database Error. Please Try Again!";
+        die(json_encode($response));
+    }
+    
+    //fetch is an array of returned data.  If any data is returned,
+    //we know that the username is already in use, so we murder our
+    //page
+    $row = $stmt->fetch();
+    if ($row) {
+        // For testing, you could use a die and message. 
+        //die("This emailAddress is already in use");
+        
+        //You could comment out the above die and use this one:
+        $response["success"] = 0;
+        $response["message"] = "I'm sorry, this emailAddress is already in use";
         die(json_encode($response));
     }
     

@@ -56,7 +56,12 @@ if ($rows) {
 		$att["longitude"]  = $row["longitude"];
 		$att["opening_hrs"] = $row["opening_hrs"];
 		$att["category_id"] = $row["category_id"];
-		$att["attr_image"]  = $row["attr_image"];
+		
+		$image  = 'images/'.$row["attr_image"];
+		$type = pathinfo($image, PATHINFO_EXTENSION);
+		$data = file_get_contents($image);
+		$att["attr_image"] = base64_encode($data);
+		
 		$att["attr_link"] = $row["attr_link"];
 		$att["attr_POI"] = $row["attr_POI"];
 		$att["location_id"]  = $row["location_id"];
