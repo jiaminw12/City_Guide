@@ -23,7 +23,7 @@ if (!empty($_POST)) {
     }
 	
     //CHECK USERNAME
-    $query = " SELECT username FROM userinfo WHERE username = :user";
+    $query = " SELECT user_id FROM userinfo WHERE username = :user";
     //now lets update what :user should be
     $query_params = array(
         ':user' => $_POST['username']
@@ -54,56 +54,18 @@ if (!empty($_POST)) {
         //die("This username is already in use");
         
         //You could comment out the above die and use this one:
-        $response["success"] = 0;
-        $response["message"] = "I'm sorry, this username is already in use";
+        $user_id = $row[0];
         die(json_encode($response));
     }
 	
-	//CHECK EMAILADDRESS
-	$query = " SELECT emailAddress FROM userinfo WHERE emailAddress = :email";
-    //now lets update what :user should be
-    $query_params = array(
-        ':email' => $_POST['emailAddress']
-    );
-    
-    //Now let's make run the query:
-    try {
-        // These two statements run the query against your database table. 
-        $stmt   = $db->prepare($query);
-        $result = $stmt->execute($query_params);
-    }
-    catch (PDOException $ex) {
-        // For testing, you could use a die and message. 
-        //die("Failed to run query: " . $ex->getMessage());
-        
-        //or just use this use this one to product JSON data:
-        $response["success"] = 0;
-        $response["message"] = "Database Error. Please Try Again!";
-        die(json_encode($response));
-    }
-    
-    //fetch is an array of returned data.  If any data is returned,
-    //we know that the username is already in use, so we murder our
-    //page
-    $row = $stmt->fetch();
-    if ($row) {
-        // For testing, you could use a die and message. 
-        //die("This emailAddress is already in use");
-        
-        //You could comment out the above die and use this one:
-        $response["success"] = 0;
-        $response["message"] = "I'm sorry, this emailAddress is already in use";
-        die(json_encode($response));
-    }
-    
     //If we have made it here without dying, then we are in the clear to 
     //create a new user.  Let's setup our new query to create a user.  
     //Again, to protect against sql injects, user tokens such as :user and :pass
-    $query = "INSERT INTO userinfo(username, emailAddress, password, date, image, gender) VALUES ( :user, :addr, :pass, :date, :image, :gender ) ";
+    $query = "INSERT INTO userinfo(user_id, emailAddress, password, date, image, gender) VALUES ( :user, :addr, :pass, :date, :image, :gender ) ";
     
     //Again, we need to update our tokens with the actual data:
     $query_params = array(
-        ':user' => $_POST['username'],
+        ':user' => user_id ,
         ':addr' => $_POST['emailAddress'],
 		':pass' => $_POST['password'],
 		':date' => $_POST['date'],
