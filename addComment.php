@@ -4,29 +4,19 @@ require("config.inc.php");
 
 //if posted data is not empty
 if (!empty($_POST)) {
-    //If the username or password is empty when the user submits
-    //the form, the page will die.
-    //Using die isn't a very good practice, you may want to look into
-    //displaying an error message within the form instead.  
-    //We could also do front-end form validation from within our Android App,
-    //but it is good to have a have the back-end code do a double check.
-    if (empty($_POST['username']) || empty($_POST['password']) || empty($_POST['emailAddress']) || empty($_POST['date'])|| empty($_POST['gender'])) {
-        
-        // Create some data that will be the JSON response 
+	
+    if (empty($_POST['attr_id']) || empty($_POST['comment_title']) || empty($_POST['comment_text']) || empty($_POST['rating']) || empty($_POST['username'])) {
+         
         $response["success"] = 0;
         $response["message"] = "Required field(s) is missing.";
-        
-        //die will kill the page and not execute any code below, it will also
-        //display the parameter... in this case the JSON data our Android
-        //app will parse
         die(json_encode($response));
     }
 	
-    //CHECK USERNAME
-    $query = " SELECT user_id FROM userinfo WHERE username = :user";
+    //GET USERNAME
+    $query = " SELECT user_id FROM userinfo WHERE username = :username";
     //now lets update what :user should be
     $query_params = array(
-        ':user' => $_POST['username']
+        ':username' => $_POST['username']
     );
     
     //Now let's make run the query:
@@ -34,6 +24,7 @@ if (!empty($_POST)) {
         // These two statements run the query against your database table. 
         $stmt   = $db->prepare($query);
         $result = $stmt->execute($query_params);
+		echo $result;
     }
     catch (PDOException $ex) {
         // For testing, you could use a die and message. 
@@ -41,7 +32,7 @@ if (!empty($_POST)) {
         
         //or just use this use this one to product JSON data:
         $response["success"] = 0;
-        $response["message"] = "Database Error. Please Try Again!";
+        $response["message"] = "Database Error_username. Please Try Again!";
         die(json_encode($response));
     }
     
@@ -50,27 +41,19 @@ if (!empty($_POST)) {
     //page
     $row = $stmt->fetch();
     if ($row) {
-        // For testing, you could use a die and message. 
-        //die("This username is already in use");
-        
-        //You could comment out the above die and use this one:
-        $user_id = $row[0];
-        die(json_encode($response));
+        $GLOBALS['userid'] = $row['user_id'];
     }
 	
-    //If we have made it here without dying, then we are in the clear to 
-    //create a new user.  Let's setup our new query to create a user.  
-    //Again, to protect against sql injects, user tokens such as :user and :pass
-    $query = "INSERT INTO userinfo(user_id, emailAddress, password, date, image, gender) VALUES ( :user, :addr, :pass, :date, :image, :gender ) ";
+	//INSERT
+    $query = "INSERT INTO comment(attr_id, comment_title, comment_text, rating, user_id) VALUES ( :attr, :commentTitle,  :commentText, :rate, :userID)";
     
     //Again, we need to update our tokens with the actual data:
     $query_params = array(
-        ':user' => user_id ,
-        ':addr' => $_POST['emailAddress'],
-		':pass' => $_POST['password'],
-		':date' => $_POST['date'],
-		':image' => $_POST['image'],
-		':gender' => $_POST['gender']
+		':attr' => $_POST['attr_id'],
+		':commentTitle' => $_POST['comment_title'],
+		':commentText' => $_POST['comment_text'],
+		':rate' => $_POST['rating'],
+        ':userID' => $GLOBALS['userid']
     );
     
     //time to run our query, and create the user
@@ -88,38 +71,29 @@ if (!empty($_POST)) {
         die(json_encode($response));
     }
     
-    //If we have made it this far without dying, we have successfully added
-    //a new user to our database.  We could do a few things here, such as 
-    //redirect to the login page.  Instead we are going to echo out some
-    //json data that will be read by the Android application, which will login
-    //the user (or redirect to a different activity, I'm not sure yet..)
     $response["success"] = 1;
-    $response["message"] = "Username Successfully Added!";
+    $response["message"] = "Comment Successfully Added!";
     echo json_encode($response);
-    
-    
+   
 } else {
 ?>
-	<h1>Register</h1> 
-	<form action="registration.php" method="post"> 
-	    User: <input type="text" name="username" value="" /> 
+	<h1>Comment</h1> 
+	<form action="addComment.php" method="post"> 
+	    attr_id <input type="text" name="attr_id" value="" /> 
 	    <br />
-	    Password:
-	    <input type="password" name="password" value="" /> 
+        comment_title:
+	    <input type="text" name="comment_title" value="" /> 
         <br />
-	    EmailAddress:
-	    <input type="email" name="emailAddress" value="" /> 
+	    comment_text:
+	    <input type="text" name="comment_text" value="" /> 
         <br />
-        Date:
-	    <input type="text" name="date" value="" /> 
+	    rating:
+	    <input type="text" name="rating" value="" /> 
         <br />
-        Image:
-	    <input type="text" name="image" value="" /> 
-         <br />
-        Gender:
-	    <input type="text" name="gender" value="" /> 
+        username:
+	    <input type="text" name="username" value="" /> 
 	    <br />
-	    <input type="submit" value="Register New User" /> 
+	    <input type="submit" value="Submit Comment" /> 
 	</form>
 	<?php
 }
