@@ -16,7 +16,7 @@ if (!empty($_POST)) {
         die(json_encode($response));
     }
 	
-    $query = " SELECT comment.comment_title, comment.comment_text, comment.rating, comment.date_created, userinfo.username, userinfo.image FROM comment INNER JOIN userinfo ON comment.user_id = userinfo.user_id WHERE attr_id = :attr_id"; 
+    $query = " SELECT comment.comment_title, comment.comment_text, comment.rating, comment.date_created, userinfo.username, userinfo.image FROM comment INNER JOIN userinfo ON comment.user_id = userinfo.user_id WHERE attr_id = :attr_id ORDER BY comment.date_created DESC"; 
     
     $query_params = array(
         ':attr_id' => $_POST['attr_id']
