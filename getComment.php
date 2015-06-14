@@ -51,6 +51,7 @@ if (!empty($_POST)) {
         	array_push($response["comments"], $com);
 			}
     } else {
+		$response["comments"]   = array();
 		$response["success"] = 0;
         $response["message"] = "null";
         die(json_encode($response));
