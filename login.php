@@ -2,6 +2,8 @@
 
 require("config.inc.php");
 
+$login_ok = null;
+
 if (!empty($_POST)) {
 	
 	if (empty($_POST['username']) || empty($_POST['password'])) {
@@ -17,10 +19,11 @@ if (!empty($_POST)) {
     }
 	
     //gets user's info based off of a username.
-    $query = " SELECT user_id, username, password FROM userinfo WHERE username = :username";
+    $query = " SELECT user_id, username, password FROM userinfo WHERE username = :username AND password = :password";
     
     $query_params = array(
-        ':username' => $_POST['username']
+        ':username' => $_POST['username'],
+		':password' => $_POST['password']
     );
     
     try {
