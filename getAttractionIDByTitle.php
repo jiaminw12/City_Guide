@@ -62,8 +62,8 @@ if ($rows) {
 
 }else {
 ?>
-	<h1>Get Attraction By Title</h1> 
-	<form action="getAttractionByTitle.php" method="post"> 
+	<h1>Get Attraction ID By Title</h1> 
+	<form action="getAttractionIDByTitle.php" method="post"> 
 	    Attr_Title: <input type="text" name="attr_title" value="" /> 
 	    <br />
 	    <input type="submit" value="Submit" /> 
