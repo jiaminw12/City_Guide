@@ -3,7 +3,7 @@
 require("config.inc.php");
 
 //initial query
-$query = "Select * FROM attraction ORDER BY attr_title";
+$query = "SELECT attraction.attr_id, attraction.attr_title, location.location_title FROM attraction INNER JOIN location ON attraction.location_id = location.location_id ORDER BY location.location_id";
 
 //execute query
 try {
@@ -26,6 +26,7 @@ if ($rows) {
         $att             = array();
 		$att["attr_id"] = $row["attr_id"];
 		$att["attr_title"]  = $row["attr_title"];
+		$att["location_title"] = $row["location_title"];
         
         
         //update our repsonse JSON data
