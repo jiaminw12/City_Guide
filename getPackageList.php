@@ -13,7 +13,9 @@ if (!empty($_POST)) {
         die(json_encode($response));
     }
 	
-    $query = "SELECT package.package_title, attraction.attr_title FROM package INNER JOIN attraction ON package.package_id = attraction.package_id WHERE traveller_id = :traveller_id ORDER BY attraction.attr_title"; 
+	$value = $_POST['traveller_id'];
+	
+    $query = "SELECT package.package_title, traveller.traveller_id,  GROUP_CONCAT(DISTINCT attraction.attr_title SEPARATOR ', ' ) attr_title FROM attraction INNER JOIN package ON attraction.package_id = package.package_id INNER JOIN traveller on traveller.traveller_id = package.traveller_iD GROUP BY attraction.package_id ORDER BY traveller.traveller_id ASC"; 
     
     $query_params = array(
         ':traveller_id' => $_POST['traveller_id']
@@ -38,11 +40,13 @@ if (!empty($_POST)) {
     
     	foreach ($rows as $row) {
         	$com             = array();
-			$com["package_title"] = $row["package_title"];
-			$com["attr_title"] = $row["attr_title"];
-			
-        	array_push($response["packages"], $com);
+			if ($row["traveller_id"] == $value){
+				
+			  $com["package_title"] = $row["package_title"];
+			  $com["attr_title"] = $row["attr_title"];
+			  array_push($response["packages"], $com);
 			}
+		}
     } else {
 		$response["packages"]   = array();
 		$response["success"] = 0;
