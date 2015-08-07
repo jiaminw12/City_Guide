@@ -1,5 +1,5 @@
 <?php
-
+header('Content-type: text/html; charset=utf-8');
 require("config.inc.php");
 
 //if posted data is not empty

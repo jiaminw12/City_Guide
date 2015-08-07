@@ -1,5 +1,5 @@
 <?php
-
+header('Content-type: text/html; charset=utf-8');
 require("config.inc.php");
 
 //if posted data is not empty
@@ -24,7 +24,6 @@ if (!empty($_POST)) {
         // These two statements run the query against your database table. 
         $stmt   = $db->prepare($query);
         $result = $stmt->execute($query_params);
-		echo $result;
     }
     catch (PDOException $ex) {
         // For testing, you could use a die and message. 
@@ -70,7 +69,7 @@ if (!empty($_POST)) {
         $response["message"] = "Database Error. Please Try Again!";
         die(json_encode($response));
     }
-    
+    unset($response);
     $response["success"] = 1;
     $response["message"] = "Comment Successfully Added!";
     echo json_encode($response);
